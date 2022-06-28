@@ -5,6 +5,7 @@ import {
     signInWithRedirect,
     signInWithPopup,
     GoogleAuthProvider,
+    createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -35,15 +36,16 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+    userAuth,
+    additionalInformaton = {}
+) => {
+    if (!userAuth) return;
     // what we need to do first is we need to see if there is an existing document reference.
     // i'm essentially saying, hey give me the document reference. inside of this database under the users collection with this user auth uid
     const userDocRef = doc(db, 'users', userAuth.uid);
-    console.log(userDocRef);
     // we can check if this doc exist or not by using exists() method
     const userSnapShot = await getDoc(userDocRef);
-    // console.log(userSnapShot);
-    // console.log(userSnapShot.exists());
 
     if (!userSnapShot.exists()) {
         const { displayName, email } = userAuth;
@@ -53,10 +55,16 @@ export const createUserDocumentFromAuth = async (userAuth) => {
                 displayName,
                 email,
                 createdAt,
+                ...additionalInformaton,
             });
         } catch (e) {
             console.log(e, 'error creating the user');
         }
     }
     return userDocRef;
+};
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+    if (!email || !password) return;
+    return await createUserWithEmailAndPassword(auth, email, password);
 };
