@@ -1,8 +1,13 @@
+import { useContext } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import './navigation.styles.scss';
 import { ReactComponent as CrwnLogo } from '../../assets/crown.svg';
+import { UserContext } from '../../contexts/user.context';
+import { signOutUser } from '../../utils/firebase/firebase.utils';
 
 const Navigation = () => {
+    const { currentUser } = useContext(UserContext);
+
     return (
         <>
             <div className="navigation">
@@ -13,9 +18,19 @@ const Navigation = () => {
                     <Link className="nav-link" to="/shop">
                         SHOP
                     </Link>
-                    <Link className="nav-link" to="/sign-in">
-                        SIGN IN
-                    </Link>
+                    {currentUser ? (
+                        <span
+                            className="nav-link"
+                            to="/sign-out"
+                            onClick={signOutUser}
+                        >
+                            SIGN OUT
+                        </span>
+                    ) : (
+                        <Link className="nav-link" to="/sign-in">
+                            SIGN IN
+                        </Link>
+                    )}
                 </div>
             </div>
             <Outlet />
@@ -24,3 +39,7 @@ const Navigation = () => {
 };
 
 export default Navigation;
+
+// if you have multiple components that are all listening to a context,
+// even though they don't use the actual values, for example, just as we see here, we're just initializing the value.
+// the face that you're hooked into the context will cause react to rerun your function. not necessarily re-render, but at least the funcitons getting rerun. (會到 return 之前)

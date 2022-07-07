@@ -15,7 +15,6 @@ const defaultFormFields = {
 
 const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
-
     const { email, password } = formFields;
 
     const resetFormFields = () => {
@@ -23,20 +22,18 @@ const SignInForm = () => {
     };
 
     const signInWithGoogle = async () => {
-        const { user } = await signInWithGooglePopup();
+        await signInWithGooglePopup();
         // 儘管我們在db裡面還沒有任何collection, google還是會在path裡面給我們users/一長串uid  (我們在設定檔那邊有 console.log(userDocRef) )
-        await createUserDocumentFromAuth(user);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await signInAuthUserWithEmailAndPassword(
+            const { user } = await signInAuthUserWithEmailAndPassword(
                 email,
                 password
             );
-            console.log(response);
             resetFormFields();
         } catch (err) {
             switch (err.code) {
