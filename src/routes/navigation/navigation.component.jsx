@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import CardIcon from '../../components/cart-icon/card-icon.component';
 import CardDropdown from '../../components/cart-dropdown/cart-dropdown.component';
@@ -10,7 +10,12 @@ import { CartContext } from '../../contexts/cart.context';
 import { ReactComponent as CrwnLogo } from '../../assets/crown.svg';
 import { signOutUser } from '../../utils/firebase/firebase.utils';
 
-import './navigation.styles.scss';
+import {
+    NavigationContainer,
+    LogoContainer,
+    NavLinksContainer,
+    NavLink,
+} from './navigation.styles';
 
 const Navigation = () => {
     const { currentUser } = useContext(UserContext);
@@ -18,31 +23,23 @@ const Navigation = () => {
 
     return (
         <>
-            <div className="navigation">
-                <Link className="logo-container" to="/">
+            <NavigationContainer>
+                <LogoContainer to="/">
                     <CrwnLogo className="logo" />
-                </Link>
-                <div className="nav-links-container">
-                    <Link className="nav-link" to="/shop">
-                        SHOP
-                    </Link>
+                </LogoContainer>
+                <NavLinksContainer>
+                    <NavLink to="/shop">SHOP</NavLink>
                     {currentUser ? (
-                        <span
-                            className="nav-link"
-                            to="/sign-out"
-                            onClick={signOutUser}
-                        >
+                        <NavLink as="span" to="/sign-out" onClick={signOutUser}>
                             SIGN OUT
-                        </span>
+                        </NavLink>
                     ) : (
-                        <Link className="nav-link" to="/sign-in">
-                            SIGN IN
-                        </Link>
+                        <NavLink to="/sign-in">SIGN IN</NavLink>
                     )}
                     <CardIcon />
-                </div>
+                </NavLinksContainer>
                 {isCartOpen && <CardDropdown />}
-            </div>
+            </NavigationContainer>
             <Outlet />
         </>
     );
